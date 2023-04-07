@@ -3,7 +3,7 @@ compile_gxx= g++
 compile_clang= clang
 compile_clangxx= clang++
 
-c_args= -std=gnu99 -Wall -O2
+c_args= -std=gnu99 -Wall -O2 
 cxx_args= -std=c++11 -Wall -O2 
 
 compile_test_args= -DCOMPILE_TEST
@@ -37,12 +37,12 @@ lib0.a: 0.o 1.o 2.o
 	ar cr $@ $^     
 
 
-maincpp: maincpp.o lib0hpp.so  
-	$(ccl) $(ccl_args) -L./ -o $@ $< -l0hpp
+maincpp: maincpp.o lib0hpp.so 
+	$(compile_clangxx) $(cxx_args) -L./ -o $@ $< -l0hpp
 lib0hpp.so: 0.hpp
-	$(ccl) -shared -fpic -x c++ $(ccl_args) -o $@ $<
+	$(compile_clangxx) -shared -fpic -x c++ $(cxx_args) -o $@ $<
 maincpp.o: main.cpp 
-	$(ccl) -c $(ccl_args) -o $@ $<  
+	$(compile_clangxx) -c $(cxx_args) -o $@ $<  
 
 test: main.o 
 	$(ccl) $(compile_test_args) -c $(ccl_args) -o $@ $<

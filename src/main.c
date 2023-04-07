@@ -5,17 +5,19 @@
 #include <malloc.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <time.h>
 
-int main(int argc, char *args[]){
+int main(int argc, char *argv[]){
 
-    //assert(argc == 2);
     
     // #if defined RUN_TEST
     // #undef RUN_TEST
     // #endif 
     
     #ifdef RUN_TEST
-    test_c_str_dec_bit_minus();
+    assert(argc == 2);
+    test_c_str_dec_plus_n_round(atoi(argv[1]));
     #endif 
 
     return 0;

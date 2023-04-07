@@ -28,6 +28,9 @@
 #define X64_INT_UDEC_MAX_BITS 10
 #define X64_INT_HEX_BITS 8
 
+#define X64_LONG_LONG_BIN_BITS LONG_LONG_INT_BITS 
+
+#define X64_LONG_LONG_UDEC_MAX_BITS 19
 /**
  * (1 << 31) - 1 = 2147483647
  * (1 << 32) - 1 = 4294967295
@@ -158,6 +161,10 @@ void test_static_inline_c_str_dec_rm_zero();
 void test_static_inline_c_str_dec_bit_plus();
 void test_c_str_bin_mv_bit();
 void test_c_str_dec_bit_minus();
+void test_c_str_dec_plus();
+void test_c_str_dec_plus_n_round(int );
+void test_make_rand();
+void test_int64_dec_to_c_str();
 #endif 
 
 #endif 

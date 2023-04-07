@@ -5,11 +5,12 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/syscall.h>
-
+#include <stdlib.h>
+#include <time.h>
 
 // Pass 
 unsigned long long int rev64(unsigned long long int int64_num){
-    return ((int64_num & INT64_LOW32_MASK) << LONG_INT_BITS) + 
+    return ((int64_num & INT64_LOW32_MASK) << LONG_INT_BITS) | 
             ((int64_num & INT64_HIGH32_MASK) >> LONG_INT_BITS);
 }
 
@@ -102,6 +103,57 @@ char* bit32_to_c_str_hex32(long int _bits){
     return PTR_UNDEFINE_VALUE;
 }
 
+static inline void 
+swap_char_ptr(char *_dest_addr, char *_src_addr)
+{
+    char _dest_val = *_dest_addr;
+    *_dest_addr = *_src_addr;
+    *_src_addr = _dest_val;
+}
+
+
+// Pass
+static inline char*
+int_dec_to_c_str(int _type, void *_dec){
+    return PTR_UNDEFINE_VALUE;
+}
+char* int32_dec_to_c_str(long int _dec){
+    assert(!(_dec & SLONG_INT_MIN));
+    char *_dest = (char *)(malloc(X64_INT_UDEC_MAX_BITS + 1));
+    _dest[X64_LONG_LONG_BIN_BITS] = '\0';
+    int _dest_l = 0;
+    while( _dec > 0 ){
+        _dest[_dest_l ++] = _dec % 10 + 48;
+        _dec /= 10;
+    }
+    _dest[_dest_l] = '\0';
+    for(int idx = INDEX_BORDER_VALUE; idx < (_dest_l >> 1); ++ idx)
+        swap_char_ptr(_dest + idx, _dest + _dest_l - idx - 1);
+    return _dest;
+}
+char* int64_dec_to_c_str(long long int _dec){
+    assert(!(_dec & SLONG_LONG_INT_MIN));
+    char *_dest = (char *)(malloc(X64_LONG_LONG_UDEC_MAX_BITS + 1));
+    _dest[X64_LONG_LONG_BIN_BITS] = '\0';
+    int _dest_l = 0;
+    while( _dec > 0 ){
+        _dest[_dest_l ++] = _dec % 10 + 48;
+        _dec /= 10;
+    }
+    _dest[_dest_l] = '\0';
+    for(int idx = INDEX_BORDER_VALUE; idx < (_dest_l >> 1); ++ idx)
+        swap_char_ptr(_dest + idx, _dest + _dest_l - idx - 1);
+    return _dest;
+}
+
+#ifdef COMPILE_TEST
+void test_int64_dec_to_c_str(){
+    // assert to stop 
+    // printf("%s\n", int64_dec_to_c_str(0XFF00FF00FFFF00FF));
+    // run normal
+    printf("%s\n", int64_dec_to_c_str(1237896057));
+}
+#endif 
 
 // binary type system
 // 0b 0B bin binary
@@ -693,6 +745,11 @@ void test_static_inline_c_str_dec_bit_plus(){
 }
 #endif 
 
+static inline char* 
+c_str_dec_mul_2_v1(const char *_src)
+{
+    return c_str_dec_bit_plus(_src, _src);
+}
 
 // _-> _dest - _src
 // assure _dest > _src 
@@ -755,7 +812,7 @@ char* c_str_dec_plus(const char *_dest, const char *_src){
                     );
     char *ans_val = ( (_opt == PLUS_TAG) ?
                         ((_cmp == COMP_EQ) ? 
-                            c_str_dec_mul_2(_dest_val) :
+                            c_str_dec_mul_2_v1(_dest_val) :
                             c_str_dec_bit_plus(_dest_val, _src_val)
                         ) :
                         ((_cmp == COMP_EQ) ?
@@ -769,14 +826,103 @@ char* c_str_dec_plus(const char *_dest, const char *_src){
     return ans_sign ? c_str_dec_sign_flip(ans_val) : ans_val;
 }
 
+// Pass
+static inline long long int 
+make_rand()
+{
+    return rand() % (SLONG_INT_MAX) ;
+}
+
+#ifdef COMPILE_TEST
+void test_make_rand(){
+    printf("%ld\n", make_rand());
+}
+void test_c_str_dec_plus(){
+
+    long long int _dest, _src;
+    char *_dest_c_str, *_src_c_str;
+
+
+    // + +
+    _dest = make_rand(), _src = make_rand();
+    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
+    printf("%s, %s\n", _dest_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", _dest + _src, c_str_dec_plus(_dest_c_str, _src_c_str));
+    free(_dest_c_str), free(_src_c_str);
+
+    // + - 
+    _dest = make_rand(), _src = make_rand();
+    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
+    printf("%s, -%s\n", _dest_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", _dest - _src, c_str_dec_plus(_dest_c_str, c_str_dec_sign_flip(_src_c_str)));
+    free(_dest_c_str), free(_src_c_str);
+
+    // - + 
+    _dest = make_rand(), _src = make_rand();
+    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
+    printf("-%s, %s\n", _dest_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", -_dest + _src, c_str_dec_plus(c_str_dec_sign_flip(_dest_c_str), _src_c_str));
+    free(_dest_c_str), free(_src_c_str);
+
+    // - -
+    _dest = make_rand(), _src = make_rand();
+    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
+    printf("-%s, -%s\n", _dest_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", -_dest -_src, c_str_dec_plus(c_str_dec_sign_flip(_dest_c_str), c_str_dec_sign_flip(_src_c_str)));
+    free(_dest_c_str), free(_src_c_str);
+
+
+    // val val
+    _src = make_rand();
+    _src_c_str = int64_dec_to_c_str(_src);
+    printf("%s, %s\n", _src_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", _src + _src, c_str_dec_plus(_src_c_str, _src_c_str));
+    free(_src_c_str);
+
+    // val -val
+    _src = make_rand();
+    _src_c_str = int64_dec_to_c_str(_src);
+    printf("%s, -%s\n", _src_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", _src - _src, c_str_dec_plus(_src_c_str, c_str_dec_sign_flip(_src_c_str)));
+    free(_src_c_str);
+
+    // -val val
+    _src = make_rand();
+    _src_c_str = int64_dec_to_c_str(_src);
+    printf("-%s, %s\n", _src_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n",- _src + _src, c_str_dec_plus( c_str_dec_sign_flip(_src_c_str), _src_c_str));
+    free(_src_c_str);
+
+    // -val -val
+    _src = make_rand();
+    _src_c_str = int64_dec_to_c_str(_src);
+    printf("-%s, -%s\n", _src_c_str, _src_c_str);
+    printf("%ld\n%s\n--------------------\n", -_src - _src, c_str_dec_plus( c_str_dec_sign_flip(_src_c_str),  c_str_dec_sign_flip(_src_c_str)));
+    free(_src_c_str);
+
+    // 0 0 
+    printf("0, 0\n");
+    printf("%ld\n%s\n--------------------\n", 0, c_str_dec_plus("0", "0"));
+    
+}
+
+void test_c_str_dec_plus_n_round(int _n){
+    for(int i = 0; i < _n; i ++){
+        printf("Test Round %d --------------------\n",i + 1);
+        test_c_str_dec_plus();
+    }
+}
+#endif 
+
+
 // regex: -?[1-9]\d*
 // fft algorithm 
-char* c_str_dec_mul(const char *_dst, const char *_src){
+char* c_str_dec_mul(const char *_dest, const char *_src){
     return PTR_UNDEFINE_VALUE;
 }
 
 // regex: -?[1-9]\d*
-char* c_str_dec_div(const char *_dst, const char *_src){
+char* c_str_dec_div(const char *_dest, const char *_src){
     return PTR_UNDEFINE_VALUE;
 }
 
