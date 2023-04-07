@@ -915,6 +915,22 @@ void test_c_str_dec_plus_n_round(int _n){
 #endif 
 
 
+static inline char*
+c_str_dec_mul_bf(const char *_dest, const char *_src)
+{
+
+}
+
+/// @brief FFT Algorithm for multiple
+/// @param _dest 
+/// @param _src 
+/// @return _dest * _src countless of byte char*
+static inline char* 
+c_str_dec_mul_fft(const char *_dest, const char *_src)
+{
+
+}
+
 // regex: -?[1-9]\d*
 // fft algorithm 
 char* c_str_dec_mul(const char *_dest, const char *_src){

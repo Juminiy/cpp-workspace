@@ -1,4 +1,6 @@
 #include "2.h"
+#include "1.h"
+#include "0.h"
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -16,8 +18,7 @@ int main(int argc, char *argv[]){
     // #endif 
     
     #ifdef RUN_TEST
-    assert(argc == 2);
-    test_c_str_dec_plus_n_round(atoi(argv[1]));
+    test_c_type_byte();
     #endif 
 
     return 0;

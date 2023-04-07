@@ -5,6 +5,7 @@ compile_clangxx= clang++
 
 c_args= -std=gnu99 -Wall -O2 
 cxx_args= -std=c++11 -Wall -O2 
+c_ast_dump= -fdump-tree-all -g
 
 compile_test_args= -DCOMPILE_TEST
 run_test_args= -DRUN_TEST
@@ -16,18 +17,13 @@ ccl_debug= -g
 llvm_ir= -emit-llvm 
 llvm_cl= -ccc-print-phases
 
+
 main: main.o lib0.a 
 	$(ccl) $(ccl_args) -o $@ $^
-0.s: 0.c 0.h 
-	$(ccl) $(ccl_args) -S $<
-0.ll: 0.c 0.h
-	$(ccl) $(llvm_ir) -S -o $@ $<
-0.procedure: 0.c 0.h
-	$(ccl) $(llvm_cl) $< 
 0.o: 0.c 0.h
-	$(ccl) -c $(ccl_args) -o $@ $< 
+	$(ccl) -c $(ccl_args) $(compile_test_args) -o $@ $< 
 1.o: 1.c 1.h
-	$(ccl) -c $(ccl_args) -o $@ $<
+	$(ccl) -c $(ccl_args) $(compile_test_args) -o $@ $<
 2.o: 2.c 2.h
 	$(ccl) -c $(ccl_args) $(compile_test_args) -o $@ $<
 main.o: main.c 0.h 1.h 2.h
@@ -44,12 +40,23 @@ lib0hpp.so: 0.hpp
 maincpp.o: main.cpp 
 	$(compile_clangxx) -c $(cxx_args) -o $@ $<  
 
-test: main.o 
-	$(ccl) $(compile_test_args) -c $(ccl_args) -o $@ $<
+
+0.i: 0.c 0.h
+	$(ccl) -E $(ccl_args) $< -o $@ 
+0.s: 0.c 0.h 
+	$(ccl) $(ccl_args) -S $< 
+0.ll: 0.c 0.h
+	$(ccl) $(llvm_ir) -S -o $@ $<
+0.phases: 0.c 0.h
+	$(ccl) $(llvm_cl) $< 
+0.ast: 0.c 0.h 
+	$(compile_gcc) $(c_ast_dump) $<
+
 
 .DEFAULT_GOAL: main
 .PHONY: clean main test 
 clean:
-	rm -f *.s *.o *.a *.so *.out  
-	rm -rf ../lib main maincpp  
+	rm -f *i *.s *.ll 
+	rm -f *.o *.a *.so *.out    
+	rm -rf main maincpp  
 	clear

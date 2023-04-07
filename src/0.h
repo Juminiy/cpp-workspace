@@ -5,9 +5,21 @@
 int comp(int, void *, void *);
 char tolower_(char c);
 
-enum ctype{
-    UCHAR,CHAR,USHORT,SHORT,UINT,INT,ULONG,LONG,ULONGLONG,LONGLONG,FLOAT,DOUBLE,LONGDOUBLE,VOID
+// X64 Assume
+enum _ctype{
+    VOID,
+    UCHAR,CHAR,
+    USHORT,SHORT,
+    UINT,INT,
+    ULONG,LONG,
+    ULONGLONG,LONGLONG,
+    FLOAT,
+    DOUBLE,
+    LONGDOUBLE
 };
 
+#ifdef COMPILE_TEST
+void test_c_type_byte();
+#endif 
 
 #endif 

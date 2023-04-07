@@ -1,4 +1,6 @@
 #include "0.h"
+#include <stdio.h>
+
 int comp(int type, void *a, void *b){
     switch (type)
     {
@@ -65,6 +67,14 @@ int comp(int type, void *a, void *b){
     return 0;
 }
 
+
 char tolower_(char c){
     return (c >= 0x41 && c <= 0x5a) ? c + (((c-0x41)<26U) << 5) : c;
 }
+
+#ifdef COMPILE_TEST
+void test_c_type_byte(){
+    printf("%ld\n", sizeof(long double));
+    printf("%ld\n", sizeof(void));
+}
+#endif 
