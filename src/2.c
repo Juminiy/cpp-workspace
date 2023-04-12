@@ -1,4 +1,5 @@
 #include "2.h"
+#include <stddef.h>
 #include <malloc.h>
 #include <assert.h>
 #include <regex.h>
@@ -8,7 +9,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Pass 
+
+/// @test Pass 
+/// @brief 
+/// @param int64_num 
+/// @return 
 unsigned long long int rev64(unsigned long long int int64_num){
     return ((int64_num & INT64_LOW32_MASK) << LONG_INT_BITS) | 
             ((int64_num & INT64_HIGH32_MASK) >> LONG_INT_BITS);
@@ -50,10 +55,8 @@ hex_to_char(char hex_num)
     return (hex_num >= 0 && hex_num <= 9) ? hex_num + 48 : hex_num + 55;
 }
 
-// Pass
-// 0B 1010 1110 1011 0111 0101 1000 0001 1111
-// 0X  A    E    B    7    5    8     1    F
 
+/// @test Pass 
 /// @brief 
 /// @param int64_num 
 /// @return 0X[0-9A-F]{16} 
@@ -84,14 +87,6 @@ char* bit64_to_c_str_hex64(long long int _bits){
     return ull_to_c_str(_bits);
 }
 
-#ifdef COMPILE_TEST
-void test_ull_to_c_str(){
-    char *buf_num = ull_to_c_str(rev64(0XACEF0369BD124578));
-    int buf_sz = write(SYS_write, buf_num, 19);
-    int end_sz = write(SYS_write, "\n", 1);
-    free(buf_num);
-}
-#endif 
 
 /// @brief 
 /// @param _bits 
@@ -112,7 +107,6 @@ swap_char_ptr(char *_dest_addr, char *_src_addr)
 }
 
 
-// Pass
 static inline char*
 int_dec_to_c_str(int _type, void *_dec){
     return PTR_UNDEFINE_VALUE;
@@ -120,7 +114,7 @@ int_dec_to_c_str(int _type, void *_dec){
 char* int32_dec_to_c_str(long int _dec){
     assert(!(_dec & SLONG_INT_MIN));
     char *_dest = (char *)(malloc(X64_INT_UDEC_MAX_BITS + 1));
-    _dest[X64_LONG_LONG_BIN_BITS] = '\0';
+    _dest[X64_INT_UDEC_MAX_BITS] = '\0';
     int _dest_l = 0;
     while( _dec > 0 ){
         _dest[_dest_l ++] = _dec % 10 + 48;
@@ -131,10 +125,15 @@ char* int32_dec_to_c_str(long int _dec){
         swap_char_ptr(_dest + idx, _dest + _dest_l - idx - 1);
     return _dest;
 }
+
+/// @test Pass
+/// @brief 
+/// @param _dec 
+/// @return 
 char* int64_dec_to_c_str(long long int _dec){
     assert(!(_dec & SLONG_LONG_INT_MIN));
     char *_dest = (char *)(malloc(X64_LONG_LONG_UDEC_MAX_BITS + 1));
-    _dest[X64_LONG_LONG_BIN_BITS] = '\0';
+    _dest[X64_LONG_LONG_UDEC_MAX_BITS] = '\0';
     int _dest_l = 0;
     while( _dec > 0 ){
         _dest[_dest_l ++] = _dec % 10 + 48;
@@ -146,27 +145,10 @@ char* int64_dec_to_c_str(long long int _dec){
     return _dest;
 }
 
-#ifdef COMPILE_TEST
-void test_int64_dec_to_c_str(){
-    // assert to stop 
-    // printf("%s\n", int64_dec_to_c_str(0XFF00FF00FFFF00FF));
-    // run normal
-    printf("%s\n", int64_dec_to_c_str(1237896057));
-}
-#endif 
 
-// binary type system
-// 0b 0B bin binary
-// 0o 0O oct octal
-// 0d 0D dec decimal
-// 0x 0X hex hexadecimal
 
-// 2 < - > 8
-// 2 < - > 16
-// 2 < - > 10 
 
-// 0xf0f0f -> "0b00000000000011110000111100001111"
-// 0b10101 -> "0b00000000000000000000000000010101"
+
 /// @brief 
 /// @param _bits 
 /// @return 0b[01]{32} 
@@ -182,16 +164,8 @@ char* bit32_to_c_str_bin(int _bits){
     bits[INT_BIN_HEAD_BITS + X64_INT_BIN_BITS] = '\0';
     return bits;
 }
-#ifdef COMPILE_TEST
-void test_bit32_to_c_str(){
-    printf("%s\n", bit32_to_c_str_bin(0b10101));
-    printf("%s\n", bit32_to_c_str_bin(0xf0f0f));
-}
-#endif 
 
 
-// 0xf0f0f <- "0b00000000000011110000111100001111"
-// 0b10101 <- "0b00000000000000000000000000010101"
 /// @brief 
 /// @param bits 0b[01]{32} 
 /// @return  
@@ -203,12 +177,6 @@ int c_str_bin32_to_int(const char *bits){
     }
     return _bits;
 }
-#ifdef COMPILE_TEST
-void test_c_str_bin32_to_int(){
-    printf("%08X\n", c_str_bin32_to_int("0b00000000000011110000111100001111"));
-    printf("%08X\n", c_str_bin32_to_int("0b00000000000000000000000000010101"));
-}
-#endif 
 
 // @abstraction 
 static inline char* 
@@ -227,24 +195,15 @@ format_c_str_int32(char _type, const char *_src, int head_bits, int type_bits)
     return _dest;
 }
 
-// "0b101101" -> "0b00000000000000000000000000101101"
+/// @test Pass 
 /// @brief calculate from end bit
 /// @param _bin 0b[0-1]{1,32}
 /// @return 0b[0-1]{32}
 char* format_c_str_bin32(const char *_bin){
     return format_c_str_int32(INT32_BIN, _bin, INT_BIN_HEAD_BITS, X64_INT_BIN_BITS);
 }
-#ifdef COMPILE_TEST 
-void test_format_c_str_bin32(){ 
-    char *_str = "0b0";
-    char * _new_str = format_c_str_bin32(_str);
-    printf("%s\n", _new_str);
-    free(_new_str);
-}
-#endif 
 
 
-// "0o35430123" -> "0o00035430123"
 /// @brief 
 /// @param _oct 0o[0-7]{1,11}
 /// @return 0o[0-7]{11}
@@ -264,28 +223,17 @@ char* format_c_str_udec32(const char *_dec){
 char* format_c_str_hex32(const char *_hex){ 
     return format_c_str_int32(INT32_HEX, _hex, INT_HEX_HEAD_BITS, X64_INT_HEX_BITS);
 }
-#ifdef COMPILE_TEST
-void test_format_c_str_int32(){
-    printf("%34s\n%s\n", "0b101101", format_c_str_bin32("0b101101"));
-    puts("----------------------------------");
-    printf("%13s\n%s\n", "0o123456", format_c_str_oct32("0o123456"));
-    puts("----------------------------------");
-    printf("%10s\n%s\n", "0xf0f0ff", format_c_str_hex32("0xf0f0ff"));
-    puts("----------------------------------");
-}
-#endif 
 
-
-char* c_str_bin_get_val(const char *_bin){
+char* c_str_bin_get_val(char *_bin){
     return _bin + INT_BIN_HEAD_BITS;
 }
-char* c_str_oct_get_val(const char *_oct){
+char* c_str_oct_get_val(char *_oct){
     return _oct + INT_OCT_HEAD_BITS;
 }
-char* c_str_dec_get_val(const char *_dec){
+char* c_str_dec_get_val(char *_dec){
     return _dec + INT_DEC_HEAD_BITS;
 }
-char* c_str_hex_get_val(const char *_hex){
+char* c_str_hex_get_val(char *_hex){
     return _hex + INT_HEX_HEAD_BITS;
 }
 
@@ -297,7 +245,7 @@ char* c_str_hex_get_val(const char *_hex){
 /// @param head_bits 
 /// @param type_bits 
 /// @return 
-/// @warning
+/// @warning  writing n+1 bytes into a region of size n
 /// @bug buffer overflow detected ***: terminated 
 ///     core-dump
 static inline char*
@@ -308,7 +256,7 @@ c_str_int32_set_head(int _type, const char * _src, int head_bits, int type_bits)
     char *_dest = (char*)(malloc(tot_bits + 1));
     assert(_dest);
     _dest[0] = '0', _dest[1] = _type, _dest[tot_bits] = '\0';
-    memcpy(_dest + head_bits, _src, tot_bits);
+    memcpy(_dest + head_bits, _src, type_bits);
     return _dest;
 }
 
@@ -326,16 +274,7 @@ char* c_str_hex_set_head(const char *_hex){
     return c_str_int32_set_head(INT32_HEX, _hex, INT_HEX_HEAD_BITS, X64_INT_HEX_BITS);
 }
 
-#ifdef COMPILE_TEST
-void test_c_str_int32_set_head(){
-    puts(c_str_bin_set_head(format_c_str_bin32("01010111")));
-}
-#endif
 
-
-// calcu from end bit
-// 01 110 100 010 011 011 111 000 100 110 101 -> 
-//  1  6   4   2   3   3   7   0   4   6   5 
 char* c_str_bin_to_c_str_oct(const char *_bin){
     return PTR_UNDEFINE_VALUE;
 }
@@ -363,13 +302,12 @@ char* c_str_dec_to_c_str_bin(const char *_dec){
 
 
 // assume input is accuracy float32
-int float32_c_str_to_bit32(const char *dec_num){
-    return 0;
+int c_str_float32_to_bit32(const char *dec_num){
+    return BYTE_INITIAL_VALUE;
 }
 
 // version 1
-// 0X40A80000 -> 5.25 
-// int section over 2^32 - 1 must cast to e 
+// int section over 2^32 - 1 -> [1-9]\d*.\d*e[-][1-9]* 
 // assume input is accuracy float32
 
 /// @unfinished 
@@ -423,19 +361,19 @@ float bit32_to_float32(int _bits){
 
 
 char* ieee754_float32_ceil(const char *_num){
-    return _num;
+    return PTR_UNDEFINE_VALUE;
 }
 
 char* ieee754_float32_floor(const char *_num){
-    return _num;
+    return PTR_UNDEFINE_VALUE;
 }
 
 char* ieee754_float32_accuracy_prev(const char *_num){
-    return _num;
+    return PTR_UNDEFINE_VALUE;
 }
 
 char* ieee754_float32_accuracy_next(const char *_num){
-    return _num;
+    return PTR_UNDEFINE_VALUE;
 }
 
 // regex: -?[1-9]\d*
@@ -452,14 +390,14 @@ static inline char c_str_dec_sign(const char *_src)
 }
 
 // regex: -?[1-9]\d*
-static inline char* c_str_dec_abs(const char *_src)
+static inline char* c_str_dec_abs(char *_src)
 {
     return c_str_dec_ls_0(_src) ? &_src[1] : _src;
 }
 
 // -[1-9]\d* -> [1-9]\d*
 // [1-9]\d* -> -[1-9]\d*
-static inline char *c_str_dec_sign_flip(const char *_src)
+char* c_str_dec_sign_flip(char *_src)
 {
     char _src_sign = c_str_dec_sign(_src);
     char *_dest = PTR_INITIAL_VALUE;
@@ -479,11 +417,7 @@ static inline char *c_str_dec_sign_flip(const char *_src)
 // _dest < _src     -> 1
 // _dest > _src     -> 2
 // _dest + _src = 0 -> 3
-// regular:
-
-static inline char 
-c_str_dec_comp(const char *_dest, const char *_src)
-{
+char c_str_dec_comp(const char *_dest, const char *_src){
     // < 0 NEGATIVE_TAG 
     // > 0 POSITIVE_TAG
     char _dest_sign = c_str_dec_ls_0(_dest), _src_sign = c_str_dec_ls_0(_src);
@@ -527,44 +461,14 @@ c_str_dec_abs_comp(const char *_dest, const char *_src)
     return c_str_dec_comp(c_str_dec_abs(_dest), c_str_dec_abs(_src));
 }
 
-#ifdef COMPILE_TEST
-void test_c_str_dec_comp(){
-    printf("%d = 0\n", c_str_dec_comp("55", "55"));
-    printf("%d = 3\n", c_str_dec_comp("55", "-55"));
-    printf("%d = 2\n", c_str_dec_comp("55", "-67"));
-    printf("%d = 2\n", c_str_dec_comp("55", "-777"));
-    printf("%d = 2\n", c_str_dec_comp("55", "-5"));
-    printf("%d = 2\n", c_str_dec_comp("55", "5"));
-    printf("%d = 1\n", c_str_dec_comp("55", "67"));
-    printf("%d = 1\n", c_str_dec_comp("55", "5777"));
-    printf("%d = 2\n", c_str_dec_comp("55", "0"));
-    printf("comp(0, -0) = %d\n", c_str_dec_comp("0", "-0"));
-    printf("comp(0, 0) = %d\n", c_str_dec_comp("0", "0"));
-    printf("comp(90897, 90897) = %d\n", c_str_dec_comp("90897", "90897"));
-    printf("comp(-90789, -90789) = %d\n", c_str_dec_comp("-90789", "-90789"));
-    printf("comp(5, -5) = %d\n", c_str_dec_comp("5", "-5"));
-    printf("comp(-15, 5) = %d\n", c_str_dec_comp("-15", "5"));
-    printf("comp(123456, 555) = %d\n", c_str_dec_comp("123456", "555"));
-    printf("comp (-65222, -35321) = %d\n", c_str_dec_comp("-65222", "-35321"));
-    printf("comp(-652222222, -353299999999991) = %d\n", c_str_dec_comp("-652222222", "-353299999999991"));
-    printf("comp(652222222866, 413423434141353299999999991) = %d\n", c_str_dec_comp("652222222866", "413423434141353299999999991"));
-}
-#endif 
-
 static inline char 
 c_str_dec_opt(const char *_dest, const char *_src)
 {
     return c_str_dec_ls_0(_dest) ^ c_str_dec_ls_0(_src);
 }
-#ifdef COMPILE_TEST
-void test_c_str_opt(){
-    printf("opt(-1, 1) = %d", c_str_dec_opt("-1" ,"1"));
-}
-#endif 
 
-// -0 != 0
 static inline char 
-equal_zero(const char *_dec)
+equal_zero(char *_dec)
 {
     char *_dec_p = _dec;
     while(_dec_p){
@@ -602,18 +506,7 @@ c_str_bin_mv_bit(const char *_bin, int _off)
                 ( memset(_bin_dest, _bin[0], -_off), memcpy(_bin_dest - _off, _bin, _bin_l));
     return _bin_dest;
 }
-#ifdef COMPILE_TEST
-void test_c_str_bin_mv_bit(){
-    puts("01010100000");
-    printf("%s\n--------------------\n", c_str_bin_mv_bit("010101", 5));
-    puts("111110101");
-    printf("%s\n--------------------\n", c_str_bin_mv_bit("110101", -3));
-    puts("0000010101");
-    printf("%s\n--------------------\n", c_str_bin_mv_bit("010101", -4));
-    puts("1101010000000");
-    printf("%s\n--------------------\n", c_str_bin_mv_bit("110101", 7));
-}
-#endif 
+
 
 static inline char*
 c_str_bin_mul_2(const char *_bin)
@@ -641,18 +534,7 @@ c_str_dec_rm_lead_zero(const char *_dec)
             _dec_p
     );
 }
-#ifdef COMPILE_TEST
-void test_static_inline_c_str_dec_rm_zero(){
-    printf("%s\n", c_str_dec_rm_lead_zero("00000012345"));
-    printf("%s\n", c_str_dec_rm_lead_zero("012345"));
-    printf("%s\n", c_str_dec_rm_lead_zero("0012345"));
-    printf("%s\n", c_str_dec_rm_lead_zero("12345"));
-    printf("%s\n", c_str_dec_rm_lead_zero("0000000"));
-    printf("%s\n", c_str_dec_rm_lead_zero("0"));
-    printf("%s\n", c_str_dec_rm_lead_zero(""));
-    printf("%s\n", c_str_dec_rm_lead_zero(NULL));
-}
-#endif 
+
 
 static inline int max_int32(int _dest, int _src){
     return _dest > _src ? _dest : _src;
@@ -668,7 +550,7 @@ c_str_char_bit_opt(const char _dest, const char _src, const char _opt)
 static inline char 
 c_str_dec_bit_opt(const char *_dest, const char *_src, const char _opt)
 {
-    
+    return BYTE_UNDEFINE_VALUE;
 }
 // Pass 
 // -> _dest + _src
@@ -728,22 +610,6 @@ c_str_dec_bit_plus(const char *_dest, const char *_src)
 
     return c_str_dec_rm_lead_zero(ans);
 }
-#ifdef COMPILE_TEST
-void test_static_inline_c_str_dec_bit_plus(){
-    char _s1[502], _s2[502];
-    int _s1_l = 0, _s2_l = 0;
-    char ch;
-    while( (ch = getchar()) != '\n' ){
-        _s1[_s1_l++] = ch;
-    }
-    _s1[_s1_l] = '\0';
-    while( (ch = getchar()) != '\n'){
-        _s2[_s2_l++] = ch;
-    }
-    _s2[_s2_l] = '\0';
-    printf("%s\n", c_str_dec_bit_plus(_s1, _s2));
-}
-#endif 
 
 static inline char* 
 c_str_dec_mul_2_v1(const char *_src)
@@ -785,24 +651,16 @@ c_str_dec_bit_minus(const char *_dest, const char *_src)
 
     return c_str_dec_rm_lead_zero(ans);
 }
-#ifdef COMPILE_TEST
-void test_c_str_dec_bit_minus(){
-    printf("%s\n", c_str_dec_bit_minus("100000", "999"));
-    printf("%s\n", c_str_dec_bit_minus("100000", "99999"));
-    printf("%s\n", c_str_dec_bit_minus("123456", "78901"));
-    printf("%s\n", c_str_dec_bit_minus("111111", "111111"));
-    printf("%s\n", c_str_dec_bit_minus("3", "1"));
-}
-#endif
 
 
 // regex: -?[1-9]\d*
 char* c_str_dec_plus(const char *_dest, const char *_src){ 
     
-    char _cmp = c_str_dec_abs_comp(_dest, _src);
     char _opt = c_str_dec_opt(_dest, _src);
     char _dest_sign = c_str_dec_sign(_dest), _src_sign = c_str_dec_sign(_src);
     char *_dest_val = c_str_dec_abs(_dest), *_src_val = c_str_dec_abs(_src);
+    char _cmp = c_str_dec_comp(_dest_val, _src_val);
+
     char ans_sign = ( ( _opt == PLUS_TAG ) ? 
                         _dest_sign :
                         ( 
@@ -826,115 +684,39 @@ char* c_str_dec_plus(const char *_dest, const char *_src){
     return ans_sign ? c_str_dec_sign_flip(ans_val) : ans_val;
 }
 
-// Pass
-static inline long long int 
-make_rand()
-{
-    return rand() % (SLONG_INT_MAX) ;
-}
-
-#ifdef COMPILE_TEST
-void test_make_rand(){
-    printf("%ld\n", make_rand());
-}
-void test_c_str_dec_plus(){
-
-    long long int _dest, _src;
-    char *_dest_c_str, *_src_c_str;
 
 
-    // + +
-    _dest = make_rand(), _src = make_rand();
-    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
-    printf("%s, %s\n", _dest_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", _dest + _src, c_str_dec_plus(_dest_c_str, _src_c_str));
-    free(_dest_c_str), free(_src_c_str);
-
-    // + - 
-    _dest = make_rand(), _src = make_rand();
-    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
-    printf("%s, -%s\n", _dest_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", _dest - _src, c_str_dec_plus(_dest_c_str, c_str_dec_sign_flip(_src_c_str)));
-    free(_dest_c_str), free(_src_c_str);
-
-    // - + 
-    _dest = make_rand(), _src = make_rand();
-    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
-    printf("-%s, %s\n", _dest_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", -_dest + _src, c_str_dec_plus(c_str_dec_sign_flip(_dest_c_str), _src_c_str));
-    free(_dest_c_str), free(_src_c_str);
-
-    // - -
-    _dest = make_rand(), _src = make_rand();
-    _dest_c_str = int64_dec_to_c_str(_dest), _src_c_str = int64_dec_to_c_str(_src);
-    printf("-%s, -%s\n", _dest_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", -_dest -_src, c_str_dec_plus(c_str_dec_sign_flip(_dest_c_str), c_str_dec_sign_flip(_src_c_str)));
-    free(_dest_c_str), free(_src_c_str);
-
-
-    // val val
-    _src = make_rand();
-    _src_c_str = int64_dec_to_c_str(_src);
-    printf("%s, %s\n", _src_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", _src + _src, c_str_dec_plus(_src_c_str, _src_c_str));
-    free(_src_c_str);
-
-    // val -val
-    _src = make_rand();
-    _src_c_str = int64_dec_to_c_str(_src);
-    printf("%s, -%s\n", _src_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", _src - _src, c_str_dec_plus(_src_c_str, c_str_dec_sign_flip(_src_c_str)));
-    free(_src_c_str);
-
-    // -val val
-    _src = make_rand();
-    _src_c_str = int64_dec_to_c_str(_src);
-    printf("-%s, %s\n", _src_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n",- _src + _src, c_str_dec_plus( c_str_dec_sign_flip(_src_c_str), _src_c_str));
-    free(_src_c_str);
-
-    // -val -val
-    _src = make_rand();
-    _src_c_str = int64_dec_to_c_str(_src);
-    printf("-%s, -%s\n", _src_c_str, _src_c_str);
-    printf("%ld\n%s\n--------------------\n", -_src - _src, c_str_dec_plus( c_str_dec_sign_flip(_src_c_str),  c_str_dec_sign_flip(_src_c_str)));
-    free(_src_c_str);
-
-    // 0 0 
-    printf("0, 0\n");
-    printf("%ld\n%s\n--------------------\n", 0, c_str_dec_plus("0", "0"));
-    
-}
-
-void test_c_str_dec_plus_n_round(int _n){
-    for(int i = 0; i < _n; i ++){
-        printf("Test Round %d --------------------\n",i + 1);
-        test_c_str_dec_plus();
-    }
-}
-#endif 
-
-
+/// @brief BF(Brute Force) Algorithm for multiply 
+/// @param _dest 
+/// @param _src 
+/// @return _dest * _src countless of byte char*
 static inline char*
 c_str_dec_mul_bf(const char *_dest, const char *_src)
-{
-
+{  
+    return PTR_UNDEFINE_VALUE;
 }
 
-/// @brief FFT Algorithm for multiple
+/// @brief FFT(Fast Fourier Transform) Algorithm for multiply
 /// @param _dest 
 /// @param _src 
 /// @return _dest * _src countless of byte char*
 static inline char* 
 c_str_dec_mul_fft(const char *_dest, const char *_src)
 {
-
+    return PTR_UNDEFINE_VALUE;
 }
 
+// unfinished 
 // regex: -?[1-9]\d*
 // fft algorithm 
 char* c_str_dec_mul(const char *_dest, const char *_src){
-    return PTR_UNDEFINE_VALUE;
+    
+    char _dest_sign = c_str_dec_sign(_dest), _src_sign = c_str_dec_sign(_dest);
+    char *_dest_val __attribute__((unused)) = c_str_dec_abs(_dest), *_src_val __attribute__((unused)) = c_str_dec_abs(_src);
+    
+    char *ans_val = PTR_INITIAL_VALUE;
+
+    return (_dest_sign ^ _src_sign) ? c_str_dec_sign_flip(ans_val) : ans_val;
 }
 
 // regex: -?[1-9]\d*

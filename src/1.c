@@ -11,7 +11,7 @@ void is_same(float *num, float *num_comp){
     char *s_ = (char *)(malloc(BYTE_1 + 2));
     assert(s_);
     s_[0] = comp_same + '0', s_[1] = '\n', s_[2] = '\0';
-    int s_byte = write(SYS_write, s_, BYTE_1 + 2);
+    int s_byte __attribute__ ((unused)) = write(SYS_write, s_, BYTE_1 + 2);
     free(s_);
 }
 

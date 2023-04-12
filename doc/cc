@@ -1,0 +1,14 @@
+enterprise/community cc    win  unix-like
+Intel                icx    1       1    
+Intel                icc    1       1    
+LLVM                 clang  1       1    
+Fabrice Bellard      tcc    1       1    
+Microsoft            MSVC   1       0   
+AMD                  AOCC   0       1   
+(AMD,SGI,Google,         
+HP,Intel,Nvidia,     Open64 0       1
+Tsinghua,...)           
+
+GNU                  GCC (MinGW,    1 
+                        Cygwin,WSL) 
+

@@ -1,6 +1,8 @@
 #ifndef _2_H
 #define _2_H
 
+#include <stddef.h>
+
 #define INDEX_INITIAL_VALUE 0
 #define INDEX_BORDER_VALUE 0
 
@@ -31,19 +33,14 @@
 #define X64_LONG_LONG_BIN_BITS LONG_LONG_INT_BITS 
 
 #define X64_LONG_LONG_UDEC_MAX_BITS 19
-/**
- * (1 << 31) - 1 = 2147483647
- * (1 << 32) - 1 = 4294967295
- * (1 << 63) - 1 = 9223372036854775807
- * (1 << 64) - 1 = 18446744073709551615
- */
 
-// dec                4294967295
+
 #define ULONG_INT_MAX 0XFFFFFFFF
 #define ULONG_INT_MIN 0X00000000
 #define SLONG_INT_MAX 0X7FFFFFFF
 #define SLONG_INT_MIN 0X80000000
-// dec                     18446744073709551615
+
+
 #define ULONG_LONG_INT_MAX 0XFFFFFFFFFFFFFFFF
 #define ILONG_LONG_INT_MIN 0X0000000000000000
 #define SLONG_LONG_INT_MAX 0X7FFFFFFFFFFFFFFF
@@ -102,6 +99,10 @@ char* ull_to_c_str(unsigned long long int _bits);
 char* bit64_to_c_str_hex64(long long int _bits);
 char* bit32_to_c_str_hex32(long int _bits);
 
+char* int32_dec_to_c_str(long int _dec);
+char* int64_dec_to_c_str(long long int _dec);
+char* bit32_to_c_str_bin(int );
+int c_str_bin32_to_int(const char *);
 
 char* format_c_str_bin32(const char *);
 char* format_c_str_oct32(const char *);
@@ -109,10 +110,10 @@ char* format_c_str_oct32(const char *);
 char* format_c_str_udec32(const char *);
 char* format_c_str_hex32(const char *);
 
-char* c_str_bin_get_val(const char *);
-char* c_str_oct_get_val(const char *);
-char* c_str_dec_get_val(const char *);
-char* c_str_hex_get_val(const char *);
+char* c_str_bin_get_val(char *);
+char* c_str_oct_get_val(char *);
+char* c_str_dec_get_val(char *);
+char* c_str_hex_get_val(char *);
 
 char* c_str_bin_set_head(const char *);
 char* c_str_oct_set_head(const char *);
@@ -128,10 +129,9 @@ char* c_str_bin_to_c_str_dec(const char *);
 char* c_str_dec_to_c_str_bin(const char *);
 
 
-int float32_c_str_to_bit32(const char *);
-char* bit32_to_c_str_bin(int );
-int c_str_bin32_to_int(const char *);
+int c_str_float32_to_bit32(const char *);
 float bit32_to_float32(int );
+
 
 char* ieee754_float32_ceil(const char *);
 char* ieee754_float32_floor(const char *);
@@ -139,6 +139,8 @@ char* ieee754_float32_accuracy_prev(const char *);
 char* ieee754_float32_accuracy_next(const char *);
 
 
+char c_str_dec_comp(const char *, const char *);
+char* c_str_dec_sign_flip(char *);
 enum comp_stat{
     COMP_EQ, COMP_LS, COMP_GT, COMP_RV
 };  
@@ -150,21 +152,18 @@ char* c_str_dec_div(const char *, const char *);
 
 
 #ifdef COMPILE_TEST
-void test_c_str_dec_comp();
+
 void test_ull_to_c_str();
+void test_int64_dec_to_c_str();
 void test_bit32_to_c_str();
 void test_c_str_bin32_to_int();
 void test_format_c_str_bin32();
 void test_format_c_str_int32();
 void test_c_str_int32_set_head();
-void test_static_inline_c_str_dec_rm_zero();
-void test_static_inline_c_str_dec_bit_plus();
-void test_c_str_bin_mv_bit();
-void test_c_str_dec_bit_minus();
 void test_c_str_dec_plus();
-void test_c_str_dec_plus_n_round(int );
-void test_make_rand();
-void test_int64_dec_to_c_str();
+void test_c_str_dec_plus_n_round();
+void test_c_str_dec_comp();
+
 #endif 
 
 #endif 

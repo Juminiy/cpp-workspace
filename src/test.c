@@ -11,6 +11,13 @@
 int main(int argc, char *argv[]){
 
     
+    // #if defined RUN_TEST
+    // #undef RUN_TEST
+    // #endif 
+    
+    #ifdef RUN_TEST
+    test_c_str_int_aligned();
+    #endif 
 
     return 0;
 }
