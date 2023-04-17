@@ -109,7 +109,9 @@
         "regex.h": "c",
         "assert.h": "c",
         "string.h": "c",
-        "libc-header-start.h": "c"
+        "libc-header-start.h": "c",
+        "3.h": "c",
+        "select.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "editor.bracketPairColorization.enabled": true

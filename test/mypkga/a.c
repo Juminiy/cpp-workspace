@@ -29,9 +29,16 @@ void vbc_0(){
 // 0b10 10000000 00000000 00000000 00000000
 // 0x2 80 00 00 00
 // ULI_MAX = (1 << 32) - 1  
+
+
+void foo(int *i1, int *i2, int *res){
+    for(int i=0;i<10;i++)
+        *res += *i1 + *i2;
+}
 int main(void){
 
     
+
 
     return 0;
 }

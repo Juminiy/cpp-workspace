@@ -9,9 +9,9 @@ _start:
   syscall                 // );
 
   movq $SYS_exit,  %rax   // exit(
-  movq $1,         %rdi   //   status=1
+  movq $0,         %rdi   //   status=1
   syscall                 // );
 
 st:
-  .ascii "\033[01;31mHello, OS World\033[0m\n"
+  .ascii "Hello, OS World\n"
 ed:
