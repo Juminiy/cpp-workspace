@@ -10,7 +10,7 @@
     "launchCompleteCommand": "exec-run",
     "linux": {
       "MIMode": "gdb",
-      "miDebuggerPath": "/usr/bin/gdb"
+      "miDebuggerPath": "/usr/bin/lldb"
     },
   }
   

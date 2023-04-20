@@ -1,6 +1,5 @@
 #include "2.h"
 #include <stddef.h>
-#include <malloc.h>
 #include <assert.h>
 #include <regex.h>
 #include <string.h>

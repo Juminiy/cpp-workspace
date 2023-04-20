@@ -1,8 +1,8 @@
 #include "2.h"
 #include "3.h"
-#include <malloc.h>
-#include <error.h>
 #include <string.h>
+
+
 
 /// @brief make (2|8|10|16) hex unlimited length integer
 /// @param hex 
