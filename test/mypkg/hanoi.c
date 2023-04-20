@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #define FROM 'a'
 #define VIA_ 'b'
 #define TO__ 'c'

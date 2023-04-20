@@ -1,6 +1,6 @@
 #ifndef __FG_FUNCTION__
 #define __FG_FUNCTION__
-#include <malloc.h>
+#include <stdlib.h>
 
 int f(int);
 int g(int);

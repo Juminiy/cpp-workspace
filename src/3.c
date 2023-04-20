@@ -1,7 +1,7 @@
 #include "2.h"
 #include "3.h"
 #include <string.h>
-
+#include <stdlib.h>
 
 
 /// @brief make (2|8|10|16) hex unlimited length integer

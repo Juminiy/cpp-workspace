@@ -111,7 +111,8 @@
         "string.h": "c",
         "libc-header-start.h": "c",
         "3.h": "c",
-        "select.h": "c"
+        "select.h": "c",
+        "mm_malloc.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "editor.bracketPairColorization.enabled": true

@@ -2,7 +2,6 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>

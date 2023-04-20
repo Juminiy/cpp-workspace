@@ -3,9 +3,9 @@
 // @test_url https://www.luogu.com.cn/problem/P1601
 
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
 static inline char* 
 c_str_dec_zero()

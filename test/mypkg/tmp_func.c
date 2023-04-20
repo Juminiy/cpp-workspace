@@ -1,5 +1,5 @@
 #include "tmp_func.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 int ssignal(int base, int bits){

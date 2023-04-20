@@ -1,6 +1,5 @@
 #include "2.h"
 #include <stddef.h>
-#include <malloc.h>
 #include <assert.h>
 #include <regex.h>
 #include <string.h>
@@ -8,7 +7,7 @@
 #include <sys/syscall.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <stdio.h>
 
 #ifdef COMPILE_TEST
 
