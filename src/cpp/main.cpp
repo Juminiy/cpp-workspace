@@ -1,12 +1,12 @@
-#include "0.hpp"
 #include <iostream>
+#include "1.hpp"
+#include "ctime"
 
 int main(int argc, char *args[]){
 
-    chisato::cls_0 cls_0_item();
+    IntMap i;
 
-    std::cout << cls_0_item ;
-
-    return 0;
     
+    i.run();
+
 }

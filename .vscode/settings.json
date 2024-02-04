@@ -112,7 +112,9 @@
         "libc-header-start.h": "c",
         "3.h": "c",
         "select.h": "c",
-        "mm_malloc.h": "c"
+        "mm_malloc.h": "c",
+        "5.h": "c",
+        "locale": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "editor.bracketPairColorization.enabled": true

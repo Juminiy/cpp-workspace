@@ -18,5 +18,8 @@ int main(int argc, char *argv[]){
     test_c_str_int_aligned();
     #endif 
 
+    double _xma, _xmb;
+    scanf("%lf %lf", &_xma, &_xmb);
+    printf("%.2f %.2f\n", _xma, _xmb);
     return 0;
 }

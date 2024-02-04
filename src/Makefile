@@ -11,10 +11,12 @@ compile_test_args= -DCOMPILE_TEST
 run_test_args= -DRUN_TEST
 run_debug_args= -DRUNTIME_DEBUG
 
-ccl= $(compile_gcc)
+ccl= $(compile_clang)
 ccl_args= $(c_args)
 ccl_debug= -g
 ccl_verbose_arg = -v
+
+openmpflags= -fopenmp
 
 llvm_ir= -emit-llvm 
 llvm_cl= -ccc-print-phases
@@ -32,10 +34,12 @@ main: main.o lib0.a
 	$(ccl) -c $(ccl_args) -o $@ $<
 3.o: 3.c 3.h
 	$(ccl) -c $(ccl_args) -o $@ $<
-main.o: main.c 0.h 1.h 2.h 3.h 
+5.o: 5.c 5.h 
+	$(ccl) -c $(ccl_args) -o $@ $<
+main.o: main.c 0.h 1.h 2.h 3.h 5.h 
 	$(ccl) -c $(ccl_args) -o $@ $< 
 
-lib0.a: 0.o 1.o 2.o 3.o
+lib0.a: 0.o 1.o 2.o 3.o 5.o
 	ar cr $@ $^     
 
 
@@ -57,13 +61,14 @@ test.o: test.c 0.h 1.h 2.h 3.h
 
 
 # cxx compile 
-maincpp: maincpp.o lib0hpp.so 
-	cd cpp && $(compile_clangxx) $(cxx_args) -L./ -o $@ $< -l0hpp
-lib0hpp.so: 0.hpp
-	cd cpp && $(compile_clangxx) -shared -fpic -x c++ $(cxx_args) -o $@ $<
-maincpp.o: main.cpp 
-	cd cpp && $(compile_clangxx) -c $(cxx_args) -o $@ $<  
-
+maincpp: 1hpp.o maincpp.o 
+	$(compile_clangxx) $(cxx_args) -o $@ $^
+maincpp.o: cpp/main.cpp 
+	$(compile_clangxx) -c $(cxx_args) -o $@ $<  
+1hpp.o: cpp/1.hpp
+	$(compile_clangxx) -c $(cxx_args) $(openmpflags) -o $@ $<
+lib0hpp.so: cpp/0.hpp cpp/1.hpp
+	$(compile_clangxx) -shared -fpic -x c++ $(cxx_args) $(openmpflags) -o $@ $<
 
 
 # clang phases compile  
@@ -82,6 +87,10 @@ maincpp.o: main.cpp
 0.trace: 0.out 
 	strace ./$<
 
+# fortran prog
+f90prog: fortran/hello.f90
+	gfortran -o $@ $<
+	./f90prog
 
 
 .DEFAULT_GOAL: main

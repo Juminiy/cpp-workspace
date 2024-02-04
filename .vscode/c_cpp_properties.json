@@ -6,8 +6,8 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "gnu99",
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
             "cppStandard": "c++11",
             "intelliSenseMode": "linux-gcc-x64",
             "configurationProvider": "ms-vscode.makefile-tools"
